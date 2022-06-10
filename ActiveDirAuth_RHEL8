@@ -1,0 +1,100 @@
+############################################
+# Active Directory Configuration for RHEL8 #
+# This utilized SSSD now that NSLCD is no  #
+# longer supported in RHEL                 #
+############################################
+
+SSSD-packages:
+  pkg.installed:
+    - pkgs:
+      - sssd-ad 
+      - sssd-libwbclient
+      - krb5-workstation
+    - normalize: False
+
+sssd:
+  service.running:
+    - enable: True
+    - watch:
+      - file: /etc/sssd/sssd.conf
+      - file: /etc/krb5.keytab
+      - file: /etc/krb5.conf
+
+#NTP
+chrony:
+  pkg.installed:
+    - pkgs:
+      - chrony
+  service.running:
+    - name: chronyd
+    - enable: True
+
+/etc/sssd/sssd.conf:
+  file:
+    - managed
+    - source: SOURCE_PATH_HERE
+    - user: root
+    - group: root
+    - mode: 600
+
+/etc/krb5.keytab:
+  file.managed:
+    - user: root
+    - group: root
+    - mode: 600
+    - source: SOURCE_PATH_HERE
+
+/etc/krb5.conf:
+  file:
+    - managed
+    - source: SOURCE_PATH_HERE
+    - user: root
+    - group: root
+    - mode: 644
+
+/etc/nsswitch.conf:
+  file:
+    - managed
+    - source: SOURCE_PATH_HERE
+    - user: root
+    - group: root
+    - mode: 644
+
+############### PAM CONF ################
+/etc/pam.d:
+  file.recurse:
+    - source: SOURCE_PATH_HERE
+    - user: root
+    - group: root
+    - file_mode: 644
+
+############## OPENLDAP CONF ##############
+#ldap.conf file for AD
+#Not needed for auth. Just a good place for it
+/etc/openldap/ldap.conf:
+  file:
+    - managed
+    - source: SOURCE_PATH_HERE
+    - user: root
+    - group: root
+    - mode: 644
+
+ldap-tools:
+  pkg.installed:
+    - pkgs:
+      - openldap-clients
+    - normalize: False
+
+########## SHELLS ##########
+shells:
+  pkg.installed:
+    - pkgs:
+      - tcsh
+      - zsh
+      - ksh
+      - bash
+      - bash-completion
+      - rc
+      - mksh
+      - fish
+    - normalize: False
