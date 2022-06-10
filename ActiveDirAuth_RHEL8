@@ -1,6 +1,6 @@
 ############################################
 # Active Directory Configuration for RHEL8 #
-# This utilized SSSD now that NSLCD is no  #
+# This utilizes SSSD now that NSLCD is no  #
 # longer supported in RHEL                 #
 ############################################
 
